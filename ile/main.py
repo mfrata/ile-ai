@@ -12,8 +12,14 @@ FILE_ARG = typer.Argument(..., help="The path to the file to extract transaction
 @app.command()
 def extract(
     file: Path = FILE_ARG,
+    output_format: str = "json",
 ):
-    print(extract_transactions(file.read_text()))
+    result = extract_transactions(file.read_text())
+    if output_format == "json":
+        for txn in result:
+            print(txn.model_dump_json())
+    else:
+        print(result)
 
 
 if __name__ == "__main__":
