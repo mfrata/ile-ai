@@ -9,3 +9,6 @@ dependencies = [
     "pypdf2>=3.0.1",
     "typer>=0.15.2",
 ]
+
+[project.scripts]
+ile = "ile.main:app"
