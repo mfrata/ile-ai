@@ -35,7 +35,7 @@ def extract_transactions(transactions_text: str) -> list[TxnInfo]:
             },
         ],
         response_format=AllTxnInfo,
-        temperature=0
+        temperature=0,
     )
 
     parsed = AllTxnInfo.from_str(response.choices[0].message.content)

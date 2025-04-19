@@ -1,7 +1,6 @@
 from ile.extractor import extract_transactions
 from ile.schemas import Budgets, Categories
 
-
 SAMPLE_CSV = """"
 Date","Payee","Account number","Transaction type","Payment reference","Amount (EUR)","Amount (Foreign Currency)","Type Foreign Currency","Exchange Rate"
 "2023-11-08","From Root to Main Account","","Income","From Savings to Main Account","500.0","","",""
@@ -15,7 +14,7 @@ Date","Payee","Account number","Transaction type","Payment reference","Amount (E
 def test_extract_transactions():
     transactions = extract_transactions(SAMPLE_CSV)
 
-    assert len(transactions) == 5
+    assert len(transactions) == 5  # noqa[PLR2004]
 
     # Test first transaction (Supermarket)
     txn = transactions[0]
