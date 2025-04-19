@@ -14,9 +14,8 @@ Date","Payee","Account number","Transaction type","Payment reference","Amount (E
 def test_extract_transactions():
     transactions = extract_transactions(SAMPLE_CSV)
 
-    assert len(transactions) == 5  # noqa[PLR2004]
+    assert len(transactions) == 5
 
-    # Test first transaction (Supermarket)
     txn = transactions[0]
     assert txn.date == "2023-11-08"
     assert txn.date_month == "2023-11"
