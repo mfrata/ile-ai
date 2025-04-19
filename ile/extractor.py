@@ -1,8 +1,7 @@
-from openai import OpenAI
+from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIModel
 
 from ile.schemas import AllTxnInfo, TxnInfo
-
-client = OpenAI()
 
 SYSTEM = "You are a extractor of transactions from a file"
 USER = """
@@ -20,23 +19,15 @@ description = Alice DE897510 burgerkiller
 {transactions_text},
 """
 
+model = OpenAIModel("gpt-4o")
+
+extractor_agent = Agent(
+    model,
+    output_type=AllTxnInfo,
+    system_prompt=SYSTEM,
+)
+
 
 def extract_transactions(transactions_text: str) -> list[TxnInfo]:
-    response = client.beta.chat.completions.parse(
-        model="gpt-4.1-nano",
-        messages=[
-            {
-                "role": "system",
-                "content": SYSTEM,
-            },
-            {
-                "role": "user",
-                "content": USER.format(transactions_text=transactions_text),
-            },
-        ],
-        response_format=AllTxnInfo,
-        temperature=0,
-    )
-
-    parsed = AllTxnInfo.from_str(response.choices[0].message.content)
-    return parsed.all_txn
+    result: AllTxnInfo = extractor_agent.run_sync(USER.format(transactions_text=transactions_text)).output
+    return result.all_txn
