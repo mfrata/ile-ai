@@ -1,7 +1,5 @@
 from enum import StrEnum, auto
-import sys
-from datetime import datetime
-from openai import OpenAI
+
 from pydantic import BaseModel, Field
 
 
@@ -41,20 +39,3 @@ class TxnInfo(BaseModel):
 
 class AllTxnInfo(BaseModel):
     all_txn: list[TxnInfo]
-
-
-client = OpenAI()
-
-
-transactions_text = open(sys.argv[1]).read()
-
-response = client.beta.chat.completions.parse(
-    model="gpt-4o",
-    messages=[
-        {"role": "system", "content": "You are a extractor of transactions from a file"},
-        {"role": "user", "content": f"Return the list of transactions from this text: \n {transactions_text}"},
-    ],
-    response_format=AllTxnInfo,
-)
-
-print(response.choices[0].message.content)
