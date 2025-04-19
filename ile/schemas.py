@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import json
 from enum import StrEnum, auto
 
 from pydantic import BaseModel, Field
@@ -28,9 +31,9 @@ class Categories(StrEnum):
 
 
 class TxnInfo(BaseModel):
-    date: str = Field(..., description="The date of the transaction")
-    date_month: str = Field(..., description="The month of the transaction")
-    description: str = Field(..., description="A brief description of the transaction")
+    date: str = Field(..., description="The date of the transaction, format YYYY-MM-DD")
+    date_month: str = Field(..., description="The month of the transaction YYYY-MM")
+    description: str = Field(..., description="A brief description of the transaction, with phrases, names or codes info of the transaction")
     value: str = Field(..., description="The monetary value of the transaction")
     budget: Budgets = Field(..., description="The budget category for the transaction")
     category: Categories = Field(..., description="The category of the transaction")
@@ -39,3 +42,7 @@ class TxnInfo(BaseModel):
 
 class AllTxnInfo(BaseModel):
     all_txn: list[TxnInfo]
+
+    @classmethod
+    def from_str(cls, string: str) -> AllTxnInfo:
+        return cls(**json.loads(string))
