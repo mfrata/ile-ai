@@ -28,6 +28,7 @@ extractor_agent = Agent(
 )
 
 
-def extract_transactions(transactions_text: str) -> list[TxnInfo]:
-    result: AllTxnInfo = extractor_agent.run_sync(USER.format(transactions_text=transactions_text)).output
-    return result.all_txn
+async def extract_transactions(transactions_text: str) -> list[TxnInfo]:
+    result: AllTxnInfo = await extractor_agent.run(USER.format(transactions_text=transactions_text))
+    agent_output = result.output
+    return agent_output.all_txn
