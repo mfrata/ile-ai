@@ -1,5 +1,5 @@
-from pydantic_ai import Agent
-from pydantic_ai.models.openai import OpenAIModel
+from pathlib import Path
+from pydantic_ai import Agent, BinaryContent
 
 from ile.schemas import AllTxnInfo, TxnInfo
 
@@ -16,19 +16,20 @@ description = blablabla LU897510 papapa
 description = Alice DE897510 burgerkiller
 
 # TRANSACTIONS
-{transactions_text},
 """
 
-model = OpenAIModel("gpt-4o")
-
 extractor_agent = Agent(
-    model,
+    model="google-gla:gemini-2.0-flash",
     output_type=AllTxnInfo,
     system_prompt=SYSTEM,
 )
 
 
-async def extract_transactions(transactions_text: str) -> list[TxnInfo]:
-    result: AllTxnInfo = await extractor_agent.run(USER.format(transactions_text=transactions_text))
-    agent_output = result.output
+async def extract_transactions(file: Path) -> list[TxnInfo]:
+    media_type = "application/pdf" if file.suffix == ".pdf" else "text/csv"
+    result = await extractor_agent.run([
+        USER,
+        BinaryContent(data=file.read_bytes(), media_type=media_type),
+    ])
+    agent_output: AllTxnInfo = result.output
     return agent_output.all_txn
