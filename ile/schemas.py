@@ -31,12 +31,12 @@ class Categories(StrEnum):
 
 
 class TxnInfo(BaseModel):
-    date: str = Field(..., description="The date of the transaction, format YYYY-MM-DD")
-    date_month: str = Field(..., description="The month of the transaction YYYY-MM")
+    date: str = Field(..., description="The date of the transaction, format DD/MM/YYYY")
+    date_month: str = Field(..., description="The last day of the month of the transaction in the format DD/MM/YYYY")
     description: str = Field(
         ..., description="A brief description of the transaction, with phrases, names or codes info of the transaction"
     )
-    value: str = Field(..., description="The monetary value of the transaction")
+    value: float = Field(..., description="The monetary value of the transaction")
     budget: Budgets = Field(..., description="The budget category for the transaction")
     category: Categories = Field(..., description="The category of the transaction")
     tags: str = Field(default_factory=str, description="To be added by the user, do not populate")
