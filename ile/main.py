@@ -14,7 +14,8 @@ async def async_extract(
     file: Path,
     output_format: str = "json",
 ):
-    result = await extract_transactions(file)
+    content = file.read_bytes()
+    result = await extract_transactions(content)
     if output_format == "json":
         for txn in result:
             print(txn.model_dump_json())

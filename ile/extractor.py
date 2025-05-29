@@ -25,11 +25,11 @@ extractor_agent = Agent(
 )
 
 
-async def extract_transactions(file: Path) -> list[TxnInfo]:
+async def extract_transactions(file: bytes) -> list[TxnInfo]:
     media_type = "application/pdf" if file.suffix == ".pdf" else "text/csv"
     result = await extractor_agent.run([
         USER,
-        BinaryContent(data=file.read_bytes(), media_type=media_type),
+        BinaryContent(data=file, media_type=media_type),
     ])
     agent_output: AllTxnInfo = result.output
     return agent_output.all_txn
