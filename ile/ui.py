@@ -19,6 +19,8 @@ def initialize_session_state():
         st.session_state.current_edits = {}
     if "pending_files" not in st.session_state:
         st.session_state.pending_files = []
+    if "navigation_triggered" not in st.session_state:
+        st.session_state.navigation_triggered = False
 
 
 def save_transaction_changes(transaction, date, value, description, budget, category, tags):
@@ -144,6 +146,7 @@ def start_ui():
                 # Save current changes before moving
                 save_transaction_changes(current_txn, date, value, description, budget, category, tags)
                 st.session_state.current_index -= 1
+                st.session_state.navigation_triggered = True
                 st.rerun()
         with col2:
             st.write(f"Transaction {st.session_state.current_index + 1} of {len(st.session_state.transactions)}")
@@ -152,11 +155,15 @@ def start_ui():
                 # Save current changes before moving
                 save_transaction_changes(current_txn, date, value, description, budget, category, tags)
                 st.session_state.current_index += 1
+                st.session_state.navigation_triggered = True
                 st.rerun()
 
         # Display raw transaction data in an expander
         with st.expander("View Raw Transaction Data"):
             st.json(current_txn.model_dump())
+
+        # Reset navigation trigger after displaying everything
+        st.session_state.navigation_triggered = False
 
 
 
