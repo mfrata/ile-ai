@@ -36,7 +36,19 @@ def save_transaction_changes(transaction, date, value, description, budget, cate
 
 def display_transaction_editor(transaction):
     """Display the transaction editing interface."""
-    st.subheader("Edit Transaction Details")
+    # Create header with title and drop button
+    header_col1, header_col2 = st.columns([3, 1])
+    with header_col1:
+        st.subheader("Edit Transaction Details")
+    with header_col2:
+        if st.button("🗑️ Drop Transaction", type="primary"):
+            # Remove current transaction
+            st.session_state.transactions.pop(st.session_state.current_index)
+            # Adjust index if needed
+            if st.session_state.current_index >= len(st.session_state.transactions):
+                st.session_state.current_index = max(0, len(st.session_state.transactions) - 1)
+            st.success("Transaction dropped!")
+            st.rerun()
     
     # Create two columns for the form
     col1, col2 = st.columns(2)
