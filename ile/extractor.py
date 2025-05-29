@@ -1,4 +1,5 @@
-from pathlib import Path
+from typing import Literal
+
 from pydantic_ai import Agent, BinaryContent
 
 from ile.schemas import AllTxnInfo, TxnInfo
@@ -25,8 +26,10 @@ extractor_agent = Agent(
 )
 
 
-async def extract_transactions(file: bytes) -> list[TxnInfo]:
-    media_type = "application/pdf" if file.suffix == ".pdf" else "text/csv"
+async def extract_transactions(
+    file: bytes,
+    media_type: Literal["application/pdf", "text/csv"] = "application/pdf",
+) -> list[TxnInfo]:
     result = await extractor_agent.run([
         USER,
         BinaryContent(data=file, media_type=media_type),
