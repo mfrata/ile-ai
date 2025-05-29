@@ -3,6 +3,7 @@ import pandas as pd
 import asyncio
 from ile.extractor import extract_transactions
 from ile.schemas import Budgets, Categories
+import io
 
 
 def initialize_session_state():
@@ -32,6 +33,27 @@ def save_transaction_changes(transaction, date, value, description, budget, cate
     transaction.budget = budget
     transaction.category = category
     transaction.tags = tags
+
+
+def export_transactions_to_csv():
+    """Export all transactions to CSV format."""
+    if not st.session_state.transactions:
+        return None
+    
+    # Convert transactions to list of dictionaries
+    data = [txn.model_dump() for txn in st.session_state.transactions]
+    
+    # Create DataFrame
+    df = pd.DataFrame(data)
+    
+    # Convert value column to string with comma as decimal separator
+    if 'value' in df.columns:
+        df['value'] = df['value'].astype(str).str.replace('.', ',')
+    
+    # Convert to CSV
+    csv = df.to_csv(index=False, sep=';', decimal=',')
+    
+    return csv
 
 
 def display_transaction_editor(transaction):
@@ -143,6 +165,19 @@ def start_ui():
 
     # Display navigation and editor only if we have transactions
     if st.session_state.transactions:
+        # Export button at the top
+        if st.button("📥 Export All Transactions"):
+            csv = export_transactions_to_csv()
+            if csv:
+                st.download_button(
+                    label="Download CSV",
+                    data=csv,
+                    file_name="transactions.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.warning("No transactions to export")
+
         st.write(f"Total transactions: {len(st.session_state.transactions)}")
         
         # Get current transaction
