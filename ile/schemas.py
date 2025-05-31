@@ -6,6 +6,18 @@ from enum import StrEnum, auto
 from pydantic import BaseModel, Field
 
 
+class Currency(StrEnum):
+    """
+    Different currency categories.
+    """
+    EUR: str = auto()
+    USD: str = auto()
+    BRL: str = auto()
+
+    def get_main_currency(self) -> Currency:
+        return Currency.EUR
+
+
 class Budgets(StrEnum):
     """
     Different budget categories.
@@ -72,6 +84,7 @@ class TxnInfo(BaseModel):
         description="A brief description of the transaction, with phrases, names or codes info of the transaction"
     )
     value: float = Field(..., description="The monetary value of the transaction")
+    currency: Currency = Field(default=Currency.EUR, description="The currency of the transaction")
     budget: Budgets = Field( ..., description=f"{Budgets.__doc__}",)
     category: Categories = Field(..., description=f"{Categories.__doc__}",)
     tags: str = Field(default_factory=str, description="To be added by the user, do not populate")
