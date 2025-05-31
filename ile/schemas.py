@@ -16,6 +16,7 @@ class FinancialInstitution(StrEnum):
     C6: str = auto()
     AMEX: str = auto()
     MILESANDMORE: str = auto()
+    DKB: str = auto()
 
 
 
@@ -45,6 +46,8 @@ class Currency(StrEnum):
             case FinancialInstitution.AMEX:
                 return Currency.EUR
             case FinancialInstitution.MILESANDMORE:
+                return Currency.EUR
+            case FinancialInstitution.DKB:
                 return Currency.EUR
             case _:
                 return Currency.get_main_currency()
