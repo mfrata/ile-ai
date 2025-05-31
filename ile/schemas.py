@@ -6,6 +6,19 @@ from enum import StrEnum, auto
 from pydantic import BaseModel, Field
 
 
+class FinancialInstitution(StrEnum):
+    """
+    Different financial institution categories.
+    """
+    N26: str = auto()
+    XP: str = auto()
+    NUBANK: str = auto()
+    C6: str = auto()
+    AMEX: str = auto()
+    MILESANDMORE: str = auto()
+
+
+
 class Currency(StrEnum):
     """
     Different currency categories.
@@ -14,8 +27,27 @@ class Currency(StrEnum):
     USD: str = auto()
     BRL: str = auto()
 
-    def get_main_currency(self) -> Currency:
+    @classmethod
+    def get_main_currency(cls) -> Currency:
         return Currency.EUR
+    
+    @classmethod
+    def get_currency_from_financial_institution(cls, financial_institution: FinancialInstitution) -> Currency:
+        match financial_institution:
+            case FinancialInstitution.N26:
+                return Currency.EUR
+            case FinancialInstitution.XP:
+                return Currency.BRL
+            case FinancialInstitution.NUBANK:
+                return Currency.BRL
+            case FinancialInstitution.C6:
+                return Currency.BRL
+            case FinancialInstitution.AMEX:
+                return Currency.EUR
+            case FinancialInstitution.MILESANDMORE:
+                return Currency.EUR
+            case _:
+                return Currency.get_main_currency()
 
 
 class Budgets(StrEnum):
@@ -71,6 +103,10 @@ class Categories(StrEnum):
 
 
 class TxnInfo(BaseModel):
+    financial_institution: FinancialInstitution = Field(
+        default=FinancialInstitution.N26, 
+        description="The financial institution of the transaction",
+    )
     date: str = Field(
         ...,
         description="The date of the transaction, format DD/MM/YYYY",
@@ -84,7 +120,10 @@ class TxnInfo(BaseModel):
         description="A brief description of the transaction, with phrases, names or codes info of the transaction"
     )
     value: float = Field(..., description="The monetary value of the transaction")
-    currency: Currency = Field(default=Currency.EUR, description="The currency of the transaction")
+    currency: Currency = Field(
+        default=Currency.get_currency_from_financial_institution(financial_institution), 
+        description="The currency of the transaction"
+    )
     budget: Budgets = Field( ..., description=f"{Budgets.__doc__}",)
     category: Categories = Field(..., description=f"{Categories.__doc__}",)
     tags: str = Field(default_factory=str, description="To be added by the user, do not populate")
