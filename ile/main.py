@@ -17,7 +17,7 @@ async def async_extract(
 ):
     media_type = "application/pdf" if file.suffix == ".pdf" else "text/csv"
     content = file.read_bytes()
-    result = await extract_transactions(content, media_type)
+    result = await extract_transactions(content, file.name, media_type)
     if output_format == "json":
         for txn in result:
             print(txn.model_dump_json())

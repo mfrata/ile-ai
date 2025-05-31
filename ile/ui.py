@@ -102,7 +102,7 @@ async def process_file(uploaded_file):
     """Process uploaded file and return transactions."""
     content = uploaded_file.getvalue()
     media_type = "application/pdf" if uploaded_file.name.endswith(".pdf") else "text/csv"
-    return await extract_transactions(content, media_type)
+    return await extract_transactions(content, uploaded_file.name, media_type)
 
 
 def start_ui():
