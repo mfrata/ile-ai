@@ -39,20 +39,20 @@ def export_transactions_to_csv():
     """Export all transactions to CSV format."""
     if not st.session_state.transactions:
         return None
-    
+
     # Convert transactions to list of dictionaries
     data = [txn.model_dump() for txn in st.session_state.transactions]
-    
+
     # Create DataFrame
     df = pd.DataFrame(data)
-    
+
     # Convert value column to string with comma as decimal separator
     if 'value' in df.columns:
         df['value'] = df['value'].astype(str).str.replace('.', ',')
-    
+
     # Convert to CSV
     csv = df.to_csv(index=False, sep=';', decimal=',')
-    
+
     return csv
 
 
@@ -71,10 +71,10 @@ def display_transaction_editor(transaction):
                 st.session_state.current_index = max(0, len(st.session_state.transactions) - 1)
             st.success("Transaction dropped!")
             st.rerun()
-    
+
     # Create two columns for the form
     col1, col2 = st.columns(2)
-    
+
     with col1:
         date = st.date_input("Date", value=pd.to_datetime(transaction.date))
         value = st.text_input("Amount", value=transaction.value)
@@ -83,7 +83,7 @@ def display_transaction_editor(transaction):
             options=[b.value for b in Budgets],
             index=[b.value for b in Budgets].index(transaction.budget)
         )
-    
+
     with col2:
         description = st.text_area("Description", value=transaction.description, height=100)
         category = st.selectbox(
@@ -91,10 +91,10 @@ def display_transaction_editor(transaction):
             options=[c.value for c in Categories],
             index=[c.value for c in Categories].index(transaction.category)
         )
-    
+
     # Add tags field below the columns
     tags = st.text_input("Tags", value=transaction.tags, help="Add tags separated by commas")
-    
+
     return date, value, description, budget, category, tags
 
 
@@ -179,10 +179,10 @@ def start_ui():
                 st.warning("No transactions to export")
 
         st.write(f"Total transactions: {len(st.session_state.transactions)}")
-        
+
         # Get current transaction
         current_txn = st.session_state.transactions[st.session_state.current_index]
-        
+
         # Display editor and get values
         date, value, description, budget, category, tags = display_transaction_editor(current_txn)
 
